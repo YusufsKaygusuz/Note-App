@@ -51,8 +51,10 @@ function showNotes(){
 }
 showNotes();
 
+// Bu fonksiyon, menünün açılması için kullanılır.
 function showMenu(elem) {
-    elem.parentElement.classList.add("show") ;
+    elem.parentElement.classList.add("show");
+    // Menü dışında bir yere tıklanınca menü kapatılır.
     document.addEventListener("click", e =>{
         if(e.target.tagName != "I" || e.target != elem){
             elem.parentElement.classList.remove("show");
@@ -60,55 +62,76 @@ function showMenu(elem) {
     });
 }
 
+// Bu fonksiyon, bir notun silinmesini sağlar.
 function deleteNote(noteId){
+    // Silme işleminin onaylanması istenir.
     let confirmDel = confirm("Bu notu silmek istediğinize emin misiniz?");
     if(!confirmDel) return;
+    // Not dizisinden seçilen not silinir.
     notes.splice(noteId, 1);
-    // saving notes to localstorage
+    // Notları yerel depolamaya kaydetme
     localStorage.setItem("notes", JSON.stringify(notes)); 
+    // Notları yeniden göster
     showNotes();
 }
 
+// Bu fonksiyon, bir notun güncellenmesi için kullanılır.
 function updateNote(noteID, title, desc)
 {
+    // Güncelleme modu başlatılır.
     isUpdate = true;
     updateId = noteID;
+    // Not ekleme kutusu açılır.
     addBox.click();
+    // Başlık ve açıklama alanlarına veriler yazılır.
     titleTag.value = title;
     descTag.value = desc;
+    // Ekleme butonu "Notu Güncelle" olarak değiştirilir.
     addBtn.innerText = "Update Note";
+    // Popup penceresinin başlığı "Not Güncelleme" olarak değiştirilir.
     popupTitle.innerText = "Update a Note";
     console.log(noteID, title, desc);
-
 }
 
+// Ekleme butonuna tıklanınca çalışacak fonksiyon
 addBtn.addEventListener("click", e=>{
-    e.preventDefault();
-    let noteTitle = titleTag.value,
-    noteDesc = descTag.value;
+    e.preventDefault(); // Formun submit olmasını engeller.
 
+    // Girilen not başlık ve açıklama değerleri alınır.
+    let noteTitle = titleTag.value,
+        noteDesc = descTag.value;
+
+    // Not başlığı veya açıklama boş değilse devam edilir.
     if(noteTitle || noteDesc)
     {
+        // Tarih bilgisi oluşturulur.
         let dateObj = new Date(),
-        month = months[dateObj.getMonth()],
-        day = dateObj.getDate(),
-        year = dateObj.getFullYear();
+            month = months[dateObj.getMonth()],
+            day = dateObj.getDate(),
+            year = dateObj.getFullYear();
 
+        // Yeni notun bilgileri oluşturulur.
         let noteInfo =  {
-            title: noteTitle, description: noteDesc,
+            title: noteTitle, 
+            description: noteDesc,
             date: `${month} ${day}, ${year}`
         }
+
+        // Güncelleme modu açık değilse notlar dizisine yeni not eklenir.
         if(!isUpdate){
             notes.push(noteInfo);
         }
+        // Güncelleme modu açıksa, seçilen notun bilgileri güncellenir.
         else{
             isUpdate = false;
             notes[updateId] = noteInfo;
         }
         
-        // saving notes to localstorage
+        // Notlar yerel depolamaya kaydedilir.
         localStorage.setItem("notes", JSON.stringify(notes)); 
+        // Not ekleme kutusu kapatılır.
         closeIcon.click();
+        // Notlar yeniden gösterilir.
         showNotes();
     }
 
