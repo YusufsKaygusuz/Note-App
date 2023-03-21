@@ -6,42 +6,43 @@ titleTag = popupBox.querySelector("input"),
 descTag = popupBox.querySelector("textarea"),
 addBtn = popupBox.querySelector("button");
 
-const months = ["January", "February", "March", "April", "May", "June",
-                 "July", "August", "September", "October", "November", "December"];
-//getting localstorage notes if exist and parsing them
-// to js object else passing an empty array to notes
+const months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"];
 const notes = JSON.parse(localStorage.getItem("notes") || "[]");
 let isUpdate = false, updateId;
 
-addBox.addEventListener("click" , () => {
-    titleTag.focus();
+addBox.addEventListener("click", () => {
+    popupTitle.innerText = "Add a new Note";
+    addBtn.innerText = "Add Note";
     popupBox.classList.add("show");
+    document.querySelector("body").style.overflow = "hidden";
+    if(window.innerWidth > 660) titleTag.focus();
 });
 
 closeIcon.addEventListener("click", () => {
     isUpdate = false;
-    titleTag.value = "";
-    descTag.value = "";
-    addBtn.innerText = "Add Note";
-    popupTitle.innerText = "Add a new Note";
+    titleTag.value = descTag.value = "";
     popupBox.classList.remove("show");
+    document.querySelector("body").style.overflow = "auto";
 });
 
-function showNotes(){
-    document.querySelectorAll(".note").forEach(note => note.remove());
-    notes.forEach( (note, index) => {
+function showNotes() {
+    if(!notes) return;
+    document.querySelectorAll(".note").forEach(li => li.remove());
+    notes.forEach((note, id) => {
+        let filterDesc = note.description.replaceAll("\n", '<br/>');
         let liTag = `<li class="note">
                         <div class="details">
                             <p>${note.title}</p>
-                            <span>${note.description}</span>
+                            <span>${filterDesc}</span>
                         </div>
                         <div class="bottom-content">
                             <span>${note.date}</span>
                             <div class="settings">
                                 <i onclick="showMenu(this)" class="uil uil-ellipsis-h"></i>
                                 <ul class="menu">
-                                    <li onclick = "updateNote(${index}, '${note.title}', '${note.description}')"><i class="uil uil-pen"></i>Edit</li>
-                                    <li onclick = "deleteNote(${index})"><i class="uil uil-trash"></i>Delete</li>
+                                    <li onclick="updateNote(${id}, '${note.title}', '${filterDesc}')"><i class="uil uil-pen"></i>Edit</li>
+                                    <li onclick="deleteNote(${id})"><i class="uil uil-trash"></i>Delete</li>
                                 </ul>
                             </div>
                         </div>
@@ -51,88 +52,54 @@ function showNotes(){
 }
 showNotes();
 
-// Bu fonksiyon, menünün açılması için kullanılır.
 function showMenu(elem) {
     elem.parentElement.classList.add("show");
-    // Menü dışında bir yere tıklanınca menü kapatılır.
-    document.addEventListener("click", e =>{
-        if(e.target.tagName != "I" || e.target != elem){
+    document.addEventListener("click", e => {
+        if(e.target.tagName != "I" || e.target != elem) {
             elem.parentElement.classList.remove("show");
         }
     });
 }
 
-// Bu fonksiyon, bir notun silinmesini sağlar.
-function deleteNote(noteId){
-    // Silme işleminin onaylanması istenir.
-    let confirmDel = confirm("Bu notu silmek istediğinize emin misiniz?");
+function deleteNote(noteId) {
+    let confirmDel = confirm("Are you sure you want to delete this note?");
     if(!confirmDel) return;
-    // Not dizisinden seçilen not silinir.
     notes.splice(noteId, 1);
-    // Notları yerel depolamaya kaydetme
-    localStorage.setItem("notes", JSON.stringify(notes)); 
-    // Notları yeniden göster
+    localStorage.setItem("notes", JSON.stringify(notes));
     showNotes();
 }
 
-// Bu fonksiyon, bir notun güncellenmesi için kullanılır.
-function updateNote(noteID, title, desc)
-{
-    // Güncelleme modu başlatılır.
+function updateNote(noteId, title, filterDesc) {
+    let description = filterDesc.replaceAll('<br/>', '\r\n');
+    updateId = noteId;
     isUpdate = true;
-    updateId = noteID;
-    // Not ekleme kutusu açılır.
     addBox.click();
-    // Başlık ve açıklama alanlarına veriler yazılır.
     titleTag.value = title;
-    descTag.value = desc;
-    // Ekleme butonu "Notu Güncelle" olarak değiştirilir.
-    addBtn.innerText = "Update Note";
-    // Popup penceresinin başlığı "Not Güncelleme" olarak değiştirilir.
+    descTag.value = description;
     popupTitle.innerText = "Update a Note";
-    console.log(noteID, title, desc);
+    addBtn.innerText = "Update Note";
 }
 
-// Ekleme butonuna tıklanınca çalışacak fonksiyon
-addBtn.addEventListener("click", e=>{
-    e.preventDefault(); // Formun submit olmasını engeller.
+addBtn.addEventListener("click", e => {
+    e.preventDefault();
+    let title = titleTag.value.trim(),
+    description = descTag.value.trim();
 
-    // Girilen not başlık ve açıklama değerleri alınır.
-    let noteTitle = titleTag.value,
-        noteDesc = descTag.value;
+    if(title || description) {
+        let currentDate = new Date(),
+        month = months[currentDate.getMonth()],
+        day = currentDate.getDate(),
+        year = currentDate.getFullYear();
 
-    // Not başlığı veya açıklama boş değilse devam edilir.
-    if(noteTitle || noteDesc)
-    {
-        // Tarih bilgisi oluşturulur.
-        let dateObj = new Date(),
-            month = months[dateObj.getMonth()],
-            day = dateObj.getDate(),
-            year = dateObj.getFullYear();
-
-        // Yeni notun bilgileri oluşturulur.
-        let noteInfo =  {
-            title: noteTitle, 
-            description: noteDesc,
-            date: `${month} ${day}, ${year}`
-        }
-
-        // Güncelleme modu açık değilse notlar dizisine yeni not eklenir.
-        if(!isUpdate){
+        let noteInfo = {title, description, date: `${month} ${day}, ${year}`}
+        if(!isUpdate) {
             notes.push(noteInfo);
-        }
-        // Güncelleme modu açıksa, seçilen notun bilgileri güncellenir.
-        else{
+        } else {
             isUpdate = false;
             notes[updateId] = noteInfo;
         }
-        
-        // Notlar yerel depolamaya kaydedilir.
-        localStorage.setItem("notes", JSON.stringify(notes)); 
-        // Not ekleme kutusu kapatılır.
-        closeIcon.click();
-        // Notlar yeniden gösterilir.
+        localStorage.setItem("notes", JSON.stringify(notes));
         showNotes();
+        closeIcon.click();
     }
-
 });
