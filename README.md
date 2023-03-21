@@ -1,6 +1,7 @@
 # Note-App
 A free and convenient note application in your localstorage in your browser
 
+![noteApp_ss2](https://user-images.githubusercontent.com/86704802/226741504-6640549a-d8b3-4817-8099-cfd1ed42078f.png)
 
 <h2>📝Uygulama Hakkında📝</h2>
 Bu uygulama, kullanıcılara not eklemelerine ve depolamalarına olanak tanır. Kullanıcılar uygulamaya başlamadan önce "Add new Note" düğmesine tıklayarak yeni bir not ekleyebilirler. Bu, bir açılır pencere olarak görüntülenir ve kullanıcılar notlarının başlığını ve açıklamasını girebilirler. Notlar eklenirken, tüm notlar bir listede saklanır. 🗂️
