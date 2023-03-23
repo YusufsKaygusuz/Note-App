@@ -228,7 +228,7 @@ body{
     cursor: pointer;
     font-size: 17px;
     border-radius: 4px;
-    background: #6A93F8;
+    background: linear-gradient(to left, #0c5378, #c7a494);
   }
   
   
