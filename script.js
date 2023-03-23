@@ -11,18 +11,29 @@ const months = ["January", "February", "March", "April", "May", "June", "July",
 const notes = JSON.parse(localStorage.getItem("notes") || "[]");
 let isUpdate = false, updateId;
 
+// Bir "addBox" adında bir elemanın tıklanması durumunda, aşağıdaki işlevi gerçekleştir:
 addBox.addEventListener("click", () => {
+  // Popup penceresinin başlığı "Add a new Note" olarak değiştirilir.
     popupTitle.innerText = "Add a new Note";
+  // Butonun metni "Add Note" olarak değiştirilir.
     addBtn.innerText = "Add Note";
+  // Popup kutusu gösterilir.
     popupBox.classList.add("show");
+  // Dokümanın gövdesinin kaydırma özelliği devre dışı bırakılır.
     document.querySelector("body").style.overflow = "hidden";
+  // Eğer pencere genişliği 660 pikselden büyükse, başlık etiketi odaklanır.
     if(window.innerWidth > 660) titleTag.focus();
 });
 
+// "closeIcon" elemanı tıklandığında aşağıdaki işlev gerçekleştirilir:
 closeIcon.addEventListener("click", () => {
+  // "isUpdate" değişkeni false olarak ayarlanır.
     isUpdate = false;
+  // Başlık ve açıklama alanları sıfırlanır.
     titleTag.value = descTag.value = "";
+  // Popup kutusu gizlenir.
     popupBox.classList.remove("show");
+  // Dokümanın gövdesinin kaydırma
     document.querySelector("body").style.overflow = "auto";
 });
 
