@@ -38,10 +38,15 @@ closeIcon.addEventListener("click", () => {
 });
 
 function showNotes() {
+    // Eğer notlar boş ise, fonksiyondan çık
     if(!notes) return;
+    // Tüm ".note" sınıfı elemanlarını seç ve kaldır
     document.querySelectorAll(".note").forEach(li => li.remove());
+    // Her not için ayrı ayrı işlemler yap
     notes.forEach((note, id) => {
+        // Not açıklamasındaki yeni satırları HTML "br" etiketiyle değiştir
         let filterDesc = note.description.replaceAll("\n", '<br/>');
+        // Her not için HTML kodunu oluştur
         let liTag = `<li class="note">
                         <div class="details">
                             <p>${note.title}</p>
@@ -52,15 +57,17 @@ function showNotes() {
                             <div class="settings">
                                 <i onclick="showMenu(this)" class="uil uil-ellipsis-h"></i>
                                 <ul class="menu">
-                                    <li onclick="updateNote(${id}, '${note.title}', '${filterDesc}')"><i class="uil uil-pen"></i>Edit</li>
-                                    <li onclick="deleteNote(${id})"><i class="uil uil-trash"></i>Delete</li>
+                                    <li onclick="updateNote(${id}, '${note.title}', '${filterDesc}')"><i class="uil uil-pen"></i>Düzenle</li>
+                                    <li onclick="deleteNote(${id})"><i class="uil uil-trash"></i>Sil</li>
                                 </ul>
                             </div>
                         </div>
                     </li>`;
+        // "addBox" adlı elemanın hemen altına notu ekle
         addBox.insertAdjacentHTML("afterend", liTag);
     });
 }
+
 showNotes();
 
 function showMenu(elem) {
