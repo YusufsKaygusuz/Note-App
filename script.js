@@ -71,19 +71,28 @@ function showNotes() {
 showNotes();
 
 function showMenu(elem) {
+    // Öğenin ebeveynine "show" sınıfını ekle
     elem.parentElement.classList.add("show");
+    // Belge üzerinde herhangi bir yere tıklanırsa yapılacak işlemler
     document.addEventListener("click", e => {
+        // Tıklanan öğe bir "I" etiketi değilse veya tıklanan öğe "elem" öğesi değilse
         if(e.target.tagName != "I" || e.target != elem) {
+            // Öğenin ebeveyninden "show" sınıfını kaldır
             elem.parentElement.classList.remove("show");
         }
     });
 }
 
 function deleteNote(noteId) {
-    let confirmDel = confirm("Are you sure you want to delete this note?");
+    // Kullanıcıya notu silmek isteyip istemediğini sormak için onay kutusu göster
+    let confirmDel = confirm("Bu notu silmek istediğinize emin misiniz?");
+    // Kullanıcı onay vermezse fonksiyondan çık
     if(!confirmDel) return;
+    // "notes" dizisinden notu sil
     notes.splice(noteId, 1);
+    // Güncellenmiş "notes" dizisini yerel depolamada sakla
     localStorage.setItem("notes", JSON.stringify(notes));
+    // Notları yeniden göster
     showNotes();
 }
 
